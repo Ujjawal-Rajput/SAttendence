@@ -1,0 +1,513 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="2A" onchange="getSelectedStudent()"
+    autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio1">2A</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" value="2B" onchange="getSelectedStudent()"
+    autocomplete="off" checked>
+  <label class="btn btn-outline-primary" for="btnradio2">2B</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="2C" onchange="getSelectedStudent()"
+    autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio3">2C</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio4" value="2D" onchange="getSelectedStudent()"
+    autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio4">2D</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio5" value="2E" onchange="getSelectedStudent()"
+    autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio5">2E</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio6" value="2F" onchange="getSelectedStudent()"
+    autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio6">2F</label>
+
+</div>
+<br>
+
+
+<div class="btn-group mt-3" role="group" aria-label="Basic radio toggle button group">
+
+  <input type="radio" class="btn-check" name="btnradio2" id="btnradio7" value="P" onchange="populateTable()"
+    autocomplete="off" checked>
+  <label class="btn btn-outline-primary" for="btnradio7">Present</label>
+
+  <input type="radio" class="btn-check" name="btnradio2" id="btnradio8" value="A" onchange="populateTable()"
+    autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio8">Absent</label>
+
+  
+  <button class="btn btn-primary bg-steel w-20" type="button" onclick="getSelectedStudent()">Refresh</button>
+
+
+  <!-- <input type="radio" class="btn-check" name="btnradio2" id="btnradio9" value="B" onchange="getSelectedtype(this.value)" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio9">Bunkers</label> -->
+
+</div>
+
+
+<!--make input field to set new coordinates in case classes are merged / changed and again reset original coordinates to oroginal class.-->
+<div class="coordination">
+  <div class="d-flex mt-3">
+    <select class="form-select" aria-label="Default select example">
+      <!-- <option>select class / coordinates</option> -->
+      <option value="123.1.2.1" selected>2B (123.1.2.1)</option>
+      <option value="123.1.3.1"> 2A (123.1.3.1)</option>
+      <option value="123.1.4.1">Python Lab (123.1.4.1)</option>
+
+    </select>
+    <div class="d-grid gap-2 col-3">
+      <button class="btn btn-primary bg-steel" type="button" onclick="">Change</button>
+    </div>
+  </div>
+  <div class="d-flex mt-3">
+    <button class="btn btn-primary bg-steel" type="button" onclick="">Add new</button>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+<!-- <div id="myModal" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" >Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+
+<div class="modal fade" id="attendanceModal" tabindex="-1" role="dialog" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="attendanceModalLabel">Details of : <span id="modalName"></span></h5>
+              <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button> -->
+              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <!-- Modal content goes here -->
+              <p>Marked attendance at : <span id="modalTime"></span></p>
+              <p>Rollno : <span id="modalRollNo"></span></p>
+              <p>Lecture : <span id="modalLecture"></span></p>
+              <div id="modal-buttons">
+
+              </div>
+              <!-- <button type="button" class="btn btn-success" onclick="markAttendance('present')">Present</button>
+              <button type="button" class="btn btn-danger" onclick="markAttendance('absent')">Absent</button> -->
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<div class="list-group mt-3">
+
+  <p>Total Present : <span id="present_number"></span></p>
+  <p>Total Absent : <span id="absent_number"></span></p>
+
+  <div id="allow_button"></div>
+  <!-- <button class="btn btn-outline-secondary" style="background-color: green;color:#fff" id="allow_or_deny" onclick="allow_or_deny()" >
+  </button> -->
+  <!-- <button type="button" class="btn btn-outline-secondary" disabled>Button</button> -->
+
+  <!-- {% if allowed==True %} -->
+
+  <!-- {% else %}
+    <button id="allow_or_deny"><p>Allow</p></button>
+  {% endif %} -->
+
+  <div class="container mt-4" style="overflow-x: auto;">
+    <table class="table table-bordered" id="attendanceTable">
+      <thead>
+        <tr>
+          <th>S.no</th>
+          <th>Name</th>
+          <th>Roll No</th>
+          <th>Lec-1</th>
+          <th>Lec-2</th>
+          <th>Lec-3</th>
+          <th>Lec-4</th>
+          <th>Lec-5</th>
+          <th>Lec-6</th>
+          <th>Lec-7</th>
+          <th>Lec-8</th>
+        </tr>
+      </thead>
+      <tbody id="attendanceTableBody">
+        <!-- adding rows using JavaScript -->
+      </tbody>
+    </table>
+    <div class="loader" id="loader"></div>
+  </div>
+</div>
+
+<!-- <div>
+     <button type="button" class="list-group-item list-group-item-action active" style="background-color: steelblue;"
+      aria-current="true">
+      Present students
+    </button>
+    <ol class="list-group list-group-numbered" id="">
+      <li class="list-group-item">Rahul</li>
+      <li class="list-group-item">Ujjawal</li>
+      <li class="list-group-item">Veezoo</li>
+    </ol> 
+  </div> -->
+
+
+
+<!-- <div>
+      <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+        Absent students
+      </button>
+      <button type="button" class="list-group-item list-group-item-action">A second button item</button>
+      <button type="button" class="list-group-item list-group-item-action">A third button item</button>
+      <button type="button" class="list-group-item list-group-item-action">A fourth button item</button>
+      <button type="button" class="list-group-item list-group-item-action" disabled>A disabled button item</button>
+
+    </div> -->
+
+
+
+<script>
+  var container = document.body;
+
+  let total_data; //contain all students data for particular selected section
+  let presents = []; //absent students in that selected section
+  let absents = []; //present students in that selected section
+  // let bunkers=[];
+
+  // Function to show the loader
+  function showLoader() {
+    const loader = document.getElementById("loader");
+    loader.style.display = "block";
+  }
+
+  // Function to hide the loader
+  function hideLoader() {
+    const loader = document.getElementById("loader");
+    loader.style.display = "none";
+  }
+
+  //function to differentiate present and absent students
+  function differentiate(data) {
+    let a = 0;
+    let b = 0;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].attendence > 0) {
+        presents.push(data[i]);
+        a += 1;
+      }
+      else if (data[i].attendence === "00000000") {
+        absents.push(data[i]);
+        b += 1;
+      }
+    }
+    document.getElementById('present_number').innerHTML = a;
+    document.getElementById('absent_number').innerHTML = b;
+  }
+
+  // function getSelectedtype(selectedValue) {
+  //   console.log("called")
+  //   let data = total_data;
+  //   let new_data = []
+  //   if (selectedValue == 'A') {
+  //     // new_data = []
+  //     for (let i = 0; i < data.length; i++) {
+  //       if (data[i].attendence == 0 || data[i].attendence == 'null') {
+  //         new_data.push(data[i]);
+  //       }
+  //       return new_data;
+  //     }
+
+  //   }
+  //   else if (selectedValue == 'B') {
+  //     // new_data = []
+  //     for (let i = 0; i < data.length; i++) {
+  //       if (data[i].attendence > 0 && data[i].attendence < 60) {
+  //         new_data.push(data[i]);
+  //       }
+  //       return new_data;
+  //     }
+  //   }
+  //   return data;
+  // }
+
+
+  let modal_buttons = document.getElementById('modal-buttons');
+  function openModal(attendanceDetails,count,lecture) {
+    // Extract details from the attendanceDetails object
+    const name = attendanceDetails.name;
+    const rollNo = attendanceDetails.rollno;
+    const time = attendanceDetails.time; 
+
+    // Set modal content
+    document.getElementById('modalName').textContent = name;
+    document.getElementById('modalRollNo').textContent = rollNo;
+    document.getElementById('modalTime').textContent = time;
+    document.getElementById('modalLecture').textContent = lecture;
+    //console.log(lecture);
+    if (count==0){
+      modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="markAttendance('present')">Mark Present</button>`;
+    }
+    else{
+      modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="markAttendance('absent')">Mark Absent</button>`;
+    }
+    // Trigger the Bootstrap modal to open
+    $('#attendanceModal').modal('show');
+  }
+
+
+  //for populating data into table for coordinator
+  function populateTable() {
+    const tableBody = document.getElementById("attendanceTableBody");
+    tableBody.innerHTML = ""; // Clear existing rows
+    let selectedtype = document.querySelector('input[name="btnradio2"]:checked');
+    let selectedValue = selectedtype.value;
+    let data = presents;
+    if (selectedValue == 'A') {
+      data = absents;
+    }
+    if (data.length > 0) {
+      for (let i = 0; i < data.length; i++) {
+        let row = tableBody.insertRow();
+        const snoCell = row.insertCell(0);
+        const nameCell = row.insertCell(1);
+        const rollNoCell = row.insertCell(2);
+
+        snoCell.textContent = i + 1;
+        nameCell.textContent = data[i].name;
+        // nameCell.addEventListener("click", openModal);
+
+        rollNoCell.textContent = data[i].rollno;
+        // let conditions = {1:[1,0,0,0,0,0,0,0],21:[1,1,0,0,0,0,0,0],24:[1,1,1,0,0,0,0,0],64:[1,1,1,1,0,0,0,0],69:[1,1,1,1,1,0,0,0],
+        //   129:[1,1,1,1,1,1,0,0],136:[1,1,1,1,1,1,1,0],21:[1,1,1,1,1,1,1,1]
+        //   ,4:[1,0,1,0,0,0,0,0],20:[0,1,0,0,0,0,0,0],};
+        // console.log(data[i].attendence[0])
+        let count = 0;
+        for (let j = 3; j < 11; j++) {
+          let imageContainer = document.createElement('div');
+          imageContainer.className = 'image-container';
+
+          let imgElement = document.createElement("img");
+          imgElement.style.width = '25px';
+          imgElement.setAttribute('onmouseover', 'showText(this)');
+          imgElement.setAttribute('onmouseout', 'hideText(this)');
+          imgElement.setAttribute('data-toggle', 'modal');
+          imgElement.setAttribute('data-target', '#attendanceModal');
+          // imgElement.setAttribute('data-attendance-details', JSON.stringify(data[i]));
+
+          let textContainer = document.createElement('div');
+          textContainer.className = 'image-text';
+          
+          let attendanceCell = row.insertCell(j);
+
+          if (data[i].attendence[count] == 1) {
+            imgElement.src = '{{ url_for("static", filename="/project_images/present.png") }}';
+            // Attach click event to open the modal
+            // textContainer.innerText = data[i].time;
+            // textContainer.innerHTML =`<span>${data[i].time}</span><button class="btn btn-secondary bg-red" type="button" onclick="coordinatorMarkAbsent()">Absent</button>`;
+            
+            // attendanceCell = '<img src="{{ url_for("static", filename="/project_images/present.png") }}">' || "N/A";
+            // attendanceCell.textContent = data[i].attendence[count] || "N/A";
+          }
+          else {
+            imgElement.src = '{{ url_for("static", filename="/project_images/absent.png") }}';
+          }
+
+          let binary = data[i].attendence[count];
+          let lecture = count+1;
+          imgElement.addEventListener('click', function () {
+                modal_buttons.innerHTML = `<button class="btn btn-primary" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                </button>`;
+                openModal(data[i],binary,lecture);
+          });
+
+          imageContainer.appendChild(imgElement);
+          imageContainer.appendChild(textContainer);
+          container.appendChild(imageContainer);
+
+          attendanceCell.appendChild(imageContainer);
+          count++;
+        }
+      };
+    }
+    else {
+      tableBody.innerHTML = '<button class="btn btn-primary bg-steel w-20 m-2" type="button" onclick="getSelectedStudent()">Refresh table</button>';
+    }
+  }
+
+  //for showing time over present.png image.
+  function showText(img) {
+    img.nextElementSibling.style.opacity = 1;
+  }
+
+  //for hiding time over present.png image.
+  function hideText(img) {
+    img.nextElementSibling.style.opacity = 0;
+  }
+
+  //calling backend for data of students of particular selected section
+  function callAjax(url, selectedValue) {
+    document.getElementById("attendanceTableBody").innerHTML = "";
+    showLoader();
+    absents = [];
+    presents = [];
+    // Make an AJAX request
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any additional headers as needed
+      },
+      body: JSON.stringify({ selectedValue: selectedValue }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // console.log(data);
+        differentiate(data.users)
+        check_on_page_load(selectedValue);
+        hideLoader();
+        populateTable();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+  //call this function onchange section / or to get data for another section
+  function getSelectedStudent() {
+    // Get the selected radio button
+    let selectedStudent = document.querySelector('input[name="btnradio"]:checked');
+    let selectedValue = selectedStudent.value;
+    // console.log(selectedValue)
+    document.getElementById('present_number').innerHTML = 0;
+    document.getElementById('absent_number').innerHTML = 0;
+    callAjax("/get_students", selectedValue);
+  }
+
+
+  // function to set true/false in Auth table for allowing students to mark attendence or not for particular section.
+  //this function will be called only on clicking button
+  function toggle_true_false() {
+    let selectedStudent = document.querySelector('input[name="btnradio"]:checked');
+    let selectedValue = selectedStudent.value;
+    let contain = document.getElementById('allow_button');
+    contain.innerHTML = `<button class="btn btn-primary" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+</button>`;
+
+
+
+    fetch('/toggle_true_false', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ section: selectedValue }),
+    })
+      .then(response => response.json())
+      .then(data => {
+
+        if (data[0] === true) {
+          contain.innerHTML = `<button type="button" id="a1"  class="btn btn-success" onclick="toggle_true_false()">Allowed ${selectedValue}</button>`;
+        }
+        else {
+          contain.innerHTML = `<button type="button" id="a2"  class="btn btn-secondary" onclick="toggle_true_false()">Allow ${selectedValue}</button>`;
+        }
+      })
+      .catch(error => {
+        console.log("error : ", error);
+      });
+  }
+
+
+
+  //this will run on loading page , also when section is changed.
+  function check_on_page_load(section = '2B') {
+    let contain = document.getElementById('allow_button');
+    fetch('/check_true_or_false', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ selectedValue: section }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // let button = document.createElement('button');
+        if (data[0] === true) {
+          contain.innerHTML = `<button type="button" id="a1" class="btn btn-success" onclick="toggle_true_false()">Allowed ${section}</button>`;
+        }
+        else {
+          contain.innerHTML = `<button type="button" id="a2" class="btn btn-secondary" onclick="toggle_true_false()">Allow ${section}</button>`;
+        }
+        // contain.appendChild(button);
+
+      })
+      .catch(error => {
+        console.log("Error : ", error);
+      });
+  }
+
+  check_on_page_load();
+  getSelectedStudent();
+
+
+
+
+  //add coordinate system
+  //
+
+</script>
+{% endblock content %}

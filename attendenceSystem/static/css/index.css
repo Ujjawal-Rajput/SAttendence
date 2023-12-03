@@ -1,0 +1,183 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+html, body {
+	min-height: 100%;
+	background: #fff;
+	color: #000;
+}
+	/* sets the body height of the browser, so that backgrounds and div heights work correctly. 
+    Color and background will almost certainly be altered; they are just placeholders */
+	
+body {
+	font-size: 1rem;
+	text-rendering: optimizeLegibility;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* body {
+    background: #fafafa;
+    color: #333333;
+    margin-top: 5rem;
+  } */
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #444444;
+  }
+  
+  .bg-steel {
+    background-color: #5f788a;
+  }
+  
+  .site-header .navbar-nav .nav-link {
+    color: #cbd5db;
+  }
+  
+  .site-header .navbar-nav .nav-link:hover {
+    color: #ffffff;
+  }
+  
+  .site-header .navbar-nav .nav-link.active {
+    font-weight: 500;
+  }
+  
+  .content-section {
+    background: #ffffff;
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+  }
+  
+  .article-title {
+    color: #444444;
+  }
+  
+  a.article-title:hover {
+    color: #428bca;
+    text-decoration: none;
+  }
+  
+  .article-content {
+    white-space: pre-line;
+  }
+  
+  .article-img {
+    height: 65px;
+    width: 65px;
+    margin-right: 16px;
+  }
+  
+  .article-metadata {
+    padding-bottom: 1px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #e3e3e3
+  }
+  
+  .article-metadata a:hover {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .article-svg {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+  }
+  
+  .account-img {
+    height: 125px;
+    width: 125px;
+    margin-right: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .account-heading {
+    font-size: 2.5rem;
+  }
+
+
+
+
+
+
+  .main-page{
+    margin-top: 100px;
+  }
+
+  .loader {
+    border: 5px solid #878080;
+    border-top: 5px solid #070707;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    animation: spin 1s linear infinite;
+    display: none;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Red row style */
+.red-row {
+  background-color: #ffcccc; /* Light red */
+}
+
+/* Green row style */
+.green-row {
+  background-color: #ccffcf; /* Light green */
+}
+
+.coordination{
+  border: 1px solid rgb(220, 216, 216);
+  border-radius: 5px;
+  margin-top: 20px;
+  padding: 10px;
+}
+  /* video{
+    width: 40%;
+    height: 40%;
+  }
+
+  @m */
+
+  .image-container {
+    position: relative;
+    display: inline-block;
+    /* margin: 10px; */
+}
+
+.image-text {
+    position: absolute;
+    font-size: 10px;
+    color: #fff;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    background-color: rgba(100, 97, 97, 0.7);
+    padding: 2px;
+    border-radius: 5px;
+}
+
+.image-container:hover .image-text {
+    opacity: 1;
+}

@@ -1,0 +1,238 @@
+{% extends "layout.html" %}
+{% block content %}
+<!-- <div class="col-md-4">
+    <div class="content-section">
+        <h3>choose designation</h3>
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-light">Coordinator login</li>
+            <li class="list-group-item list-group-item-light">Student login</li>
+        </ul>
+        </p>
+    </div>
+</div> -->
+<!-- {% for post in posts %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="#">{{ post.author }}</a>
+            <small class="text-muted">{{ post.date_posted }}</small>
+        </div>
+        <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+        <p class="article-content">{{ post.content }}</p>
+    </div>
+</article>
+{% endfor %} -->
+
+
+<div class="content-section">
+    {% if can==True %}
+    <div class="d-grid gap-2 col-10 mx-auto" id="video-container">
+        <div id="result"></div>
+        <video class="w-100 p-3" id="video" autoplay></video>
+        <button class="btn btn-primary" type="button" id="start-button">Mark your Attendence</button>
+        <button class="btn btn-primary" type="button" id="stop-button">Stop camera</button>
+        <button class="btn btn-primary bg-steel" id="matchButton">Match face</button>
+    </div>
+    {% else %}
+
+    <h2>Ask your coordinator</h2>
+    <button class="btn btn-primary bg-steel" type="button" onclick="location.reload();">Refresh</button>
+
+
+    {% endif %}
+</div>
+
+
+<!-- <div class="d-grid gap-2 col-6 mx-auto">
+    <button class="btn btn-primary bg-steel" type="button" onclick="">Mark Attendence</button>
+</div> -->
+
+
+
+<div style="letter-spacing: 2px;">
+    <h3 class="mt-5">Today </h3>
+    <div class="coordination">
+    {% for i in range(lecture+1) %}
+    {% if data[0].attendence[i]=='1' %}
+        <span class="badge text-bg-info">Present</span>
+        <span>in Lec-{{ loop.index }}</span>
+    <!-- </div> -->
+    {% else %}
+    <!-- <div class="coordination"> -->
+        <span class="badge text-bg-danger">Absent</span>
+        <span>in Lec-{{ loop.index }}</span>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div> 
+
+
+<h3 class="mt-5">My Attendence :</h3>
+<div style="overflow-x: auto;">
+    <table class="table mt-2">
+        <thead class="border-black border-2">
+            <tr>
+                <th scope="col">S.No.</th>
+                <th scope="col">Date</th>
+                <!-- <th scope="col">P/A</th> -->
+                <th scope="col">Lec-1</th>
+                <th scope="col">Lec-2</th>
+                <th scope="col">Lec-3</th>
+                <th scope="col">Lec-4</th>
+                <th scope="col">Lec-5</th>
+                <th scope="col">Lec-6</th>
+                <th scope="col">Lec-7</th>
+                <th scope="col">Lec-8</th>
+            </tr>
+        </thead>
+        <tbody class="border-black border-2">
+            {% for i in data %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{i.date}}</td>
+                {% for j in i.attendence %}
+                {% if j=='1' %}
+                <td>
+                    <div class="image-container">
+                        <img width="25px" height="25px"
+                            src='{{ url_for("static", filename="/project_images/present.png") }}' alt="{{ j }}">
+                        <div class="image-text">{{ i.time }}</div>
+                    </div>
+                </td>
+                {% else %}
+                <td>
+                    <img width="25px" height="25px" src='{{ url_for("static", filename="/project_images/absent.png") }}'
+                        alt="{{ j }}">
+                </td>
+
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            <!-- <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+      </tr> -->
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    let videoStream;
+    const video = document.getElementById('video');
+    video.style.display = "none";
+    const startButton = document.getElementById('start-button');
+    const stopButton = document.getElementById('stop-button');
+    const matchButton = document.getElementById('matchButton');
+    const resultDiv = document.getElementById('result');
+    stopButton.disabled = true;
+    stopButton.style.display = "none";
+    matchButton.disabled = true;
+    matchButton.style.display = "none";
+
+    startButton.addEventListener('click', async () => {
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.style.display = "block";
+            video.srcObject = videoStream;
+            startButton.disabled = true;
+            startButton.style.display = "none";
+            stopButton.disabled = false;
+            stopButton.style.display = "block";
+            matchButton.disabled = false;
+            matchButton.style.display = "block";
+        } catch (error) {
+            console.error('Error accessing webcam:', error);
+        }
+    });
+
+    stopButton.addEventListener('click', () => {
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            video.style.display = "none";
+            video.srcObject = null;
+            startButton.disabled = false;
+            startButton.style.display = "block";
+            stopButton.disabled = true;
+            stopButton.style.display = "none";
+            matchButton.disabled = true;
+            matchButton.style.display = "none";
+        }
+    });
+
+    matchButton.addEventListener('click', () => {
+        if (videoStream) {
+            resultDiv.innerHTML = `Recognising...`;
+            matchButton.disabled = true;
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            resultDiv.style.color = "black";
+
+
+            // Convert the captured frame to a Blob
+
+
+            if ("geolocation" in navigator) {
+                position = navigator.geolocation.getCurrentPosition(function (position) {
+                    canvas.toBlob(blob => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        console.log(latitude, longitude);
+
+
+                        const formData = new FormData();
+                        formData.append('frame', blob, 'frame.jpg');
+                        formData.append("latitude", latitude);
+                        formData.append("longitude", longitude);
+
+                        // Send the frame data to the server with the correct content type
+                        fetch('/process_frame', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    resultDiv.innerHTML = `Error: ${data.error}`;
+                                    resultDiv.style.color = "red";
+                                    matchButton.disabled = false;
+                                } else if (data.message) {
+                                    resultDiv.innerHTML = `Message: ${data.message}`;
+                                    resultDiv.style.color = "red";
+                                    matchButton.disabled = false;
+                                } else {
+                                    resultDiv.innerHTML = `Recognized Faces: ${data.recognized_faces}`;
+                                    resultDiv.style.color = "green";
+                                    location.reload();
+
+                                    // resultDiv.innerHTML = `Recognized Faces: ${data.recognized_faces.join(', ')}`;
+                                }
+                            });
+                    }, 'image/jpeg');
+
+
+                    // }
+
+                });
+            }
+
+            else {
+                document.getElementById("locationOutput").textContent = "Geolocation is not available.";
+            }
+        }
+    });
+</script>
+
+
+{% endblock content %}
