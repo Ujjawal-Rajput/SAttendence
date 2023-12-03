@@ -141,10 +141,8 @@ def coordinatorMark():
             user_data = [binary,i.date_posted]
 
         db.session.commit()
-        # Convert the list of dictionaries to JSON
         json_data = {'data': user_data}
-        # sendthis=j
-        print(json_data)
+        # print(json_data)
         return json_data
     else:
         return {"error":'marking failed...'}
@@ -243,7 +241,6 @@ def login():
     # elif current_user.is_authenticated and current_user.section == 'Coordinator':
     #     return redirect(url_for('coordinatorPage'))
     if current_user.is_authenticated:
-        # print(current_user.section)
         if current_user.section == 'Coordinator':
             return redirect(url_for('coordinatorPage'))
         else:
@@ -273,11 +270,10 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-    """Logout the current user."""
-    user = current_user
-    user.authenticated = False
-    db.session.add(user)
-    db.session.commit()
+    # user = current_user
+    # user.authenticated = False
+    # db.session.add(user)
+    # db.session.commit()
     logout_user()
     # logout_user()
     return redirect(url_for('studentPage'))
