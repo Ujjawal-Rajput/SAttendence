@@ -123,10 +123,6 @@ def check_true_false():
 def coordinatorMark():
     if current_user.is_authenticated and current_user.section == 'Coordinator':
         data = request.get_json()
-        print(data['rollno'])
-        print(type(data['count']))
-        print(data['lecture'])
-        # print(data)
         user = MarkAttendence.query.filter_by(rollno=data['rollno'])
         binary = '0'
         user_data=[]
@@ -138,7 +134,7 @@ def coordinatorMark():
             else:
                 integer_list[data['lecture']-1] = '0'
                 binary = '0'
-            i.date_posted=datetime.now().strftime("%H:%M:%S")
+            i.date_posted=data['time']
 
             a = ''.join(integer_list)
             i.mark = a

@@ -288,6 +288,7 @@
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     var dateTime = date+' '+time;
+    // console.log(dateTime)
 
     modal_buttons.innerHTML = `<button class="btn btn-primary" type="button" disabled>
       <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
@@ -296,20 +297,20 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Add any additional headers as needed
       },
       body: JSON.stringify({ rollno:rollno, count:count, lecture:lecture, time:dateTime }),
     })
       .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        if (data[0]==0){
-          modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollno},${data[0]},${lecture})">Mark Present</button>`;
+      .then(resp => {
+        if (resp.data[0]==0){
+          document.getElementById('modalTime').textContent = '';
+          modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollno},${resp.data[0]},${lecture})">Mark Present</button>`;
         }
         else{
-          document.getElementById('modalTime').textContent = `Marked attendance at : ${data[1]}`;
-          modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollno},${data[0]},${lecture})">Mark Absent</button>`;
+          document.getElementById('modalTime').textContent = `Last attendance Marked at : ${resp.data[1]}`;
+          modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollno},${resp.data[0]},${lecture})">Mark Absent</button>`;
         }
+        getSelectedStudent();
 
         // differentiate(data.users)
         // check_on_page_load(selectedValue);
@@ -341,7 +342,7 @@
       modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Present</button>`;
     }
     else{
-      document.getElementById('modalTime').textContent = `Marked attendance at : ${time}`;
+      document.getElementById('modalTime').textContent = `Last attendance Marked at : ${time}`;
       modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Absent</button>`;
     }
     // Trigger the Bootstrap modal to open
