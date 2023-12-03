@@ -53,7 +53,7 @@ class MarkAttendence(db.Model):
     rollno = db.Column(db.Integer, db.ForeignKey('user.rollno'), unique=True, nullable=False)
     # user_id = db.Column(db.Integer, db.ForeignKey('user.rollno'), nullable=False)
     section = db.Column(db.String(20),nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.String(30) , nullable=False, default=datetime.utcnow)
     mark = db.Column(db.String(20),default="00000000")
     # mark = db.Column(db.String(20),default=0)
 
@@ -64,7 +64,7 @@ class Auth(db.Model):
     # __tablename__ = 'Post'  # Specify the actual table name in your database
     id = db.Column(db.Integer, primary_key=True)
     section = db.Column(db.String(20), db.ForeignKey('user.section'), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.String(20), nullable=False, default=datetime.utcnow)
     allow_or_not = db.Column(db.Boolean, nullable=False, default=False)
     current_lecture = db.Column(db.Integer, nullable=False, default=1)
     # all_coordinates

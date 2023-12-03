@@ -131,7 +131,7 @@
           </div>
           <div class="modal-body">
               <!-- Modal content goes here -->
-              <p>Marked attendance at : <span id="modalTime"></span></p>
+              <p id="modalTime"></p>
               <p>Rollno : <span id="modalRollNo"></span></p>
               <p>Lecture : <span id="modalLecture"></span></p>
               <div id="modal-buttons">
@@ -281,10 +281,52 @@
   //   }
   //   return data;
   // }
-
-
+  
   let modal_buttons = document.getElementById('modal-buttons');
+  function coordinatorMark(rollno,count,lecture){
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
+
+    modal_buttons.innerHTML = `<button class="btn btn-primary" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+      </button>`;
+    fetch("/coordinatorMark", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any additional headers as needed
+      },
+      body: JSON.stringify({ rollno:rollno, count:count, lecture:lecture, time:dateTime }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        if (data[0]==0){
+          modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollno},${data[0]},${lecture})">Mark Present</button>`;
+        }
+        else{
+          document.getElementById('modalTime').textContent = `Marked attendance at : ${data[1]}`;
+          modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollno},${data[0]},${lecture})">Mark Absent</button>`;
+        }
+
+        // differentiate(data.users)
+        // check_on_page_load(selectedValue);
+        // hideLoader();
+        // populateTable();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+
   function openModal(attendanceDetails,count,lecture) {
+    document.getElementById('modalName').textContent = '';
+    document.getElementById('modalRollNo').textContent = '';
+    document.getElementById('modalLecture').textContent = '';
+    document.getElementById('modalTime').textContent = '';
     // Extract details from the attendanceDetails object
     const name = attendanceDetails.name;
     const rollNo = attendanceDetails.rollno;
@@ -293,14 +335,14 @@
     // Set modal content
     document.getElementById('modalName').textContent = name;
     document.getElementById('modalRollNo').textContent = rollNo;
-    document.getElementById('modalTime').textContent = time;
     document.getElementById('modalLecture').textContent = lecture;
     //console.log(lecture);
     if (count==0){
-      modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="markAttendance('present')">Mark Present</button>`;
+      modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Present</button>`;
     }
     else{
-      modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="markAttendance('absent')">Mark Absent</button>`;
+      document.getElementById('modalTime').textContent = `Marked attendance at : ${time}`;
+      modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Absent</button>`;
     }
     // Trigger the Bootstrap modal to open
     $('#attendanceModal').modal('show');

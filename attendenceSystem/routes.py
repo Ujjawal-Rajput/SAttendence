@@ -118,6 +118,40 @@ def check_true_false():
         return [valueis]
     else:
         return {"error":'Fetching failed...'}
+    
+@app.route("/coordinatorMark", methods=['POST'])
+def coordinatorMark():
+    if current_user.is_authenticated and current_user.section == 'Coordinator':
+        data = request.get_json()
+        print(data['rollno'])
+        print(type(data['count']))
+        print(data['lecture'])
+        # print(data)
+        user = MarkAttendence.query.filter_by(rollno=data['rollno'])
+        binary = '0'
+        user_data=[]
+        for i in user:
+            integer_list = [bit for bit in i.mark]
+            if data['count'] == 0:
+                integer_list[data['lecture']-1] = '1'
+                binary = '1'
+            else:
+                integer_list[data['lecture']-1] = '0'
+                binary = '0'
+            i.date_posted=datetime.now().strftime("%H:%M:%S")
+
+            a = ''.join(integer_list)
+            i.mark = a
+            user_data = [binary,i.date_posted]
+
+        db.session.commit()
+        # Convert the list of dictionaries to JSON
+        json_data = {'data': user_data}
+        # sendthis=j
+        print(json_data)
+        return json_data
+    else:
+        return {"error":'marking failed...'}
 
 
 
