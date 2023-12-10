@@ -156,6 +156,7 @@
   <p>Total Absent : <span id="absent_number"></span></p>
 
   <div id="allow_button"></div>
+  <span id="remainingTime"></span>
   <!-- <button class="btn btn-outline-secondary" style="background-color: green;color:#fff" id="allow_or_deny" onclick="allow_or_deny()" >
   </button> -->
   <!-- <button type="button" class="btn btn-outline-secondary" disabled>Button</button> -->
@@ -287,38 +288,101 @@
 
 
 
-  function startTimer(referenceTime) {
-    // Split the reference time into hours, minutes, and seconds
-    const [hours, minutes, seconds] = referenceTime.split(":").map(Number);
 
-    // Calculate the total seconds from the reference time
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
-    // Add 5 minutes (5 * 60 seconds) to the reference time
-    const targetSeconds = totalSeconds + 5 * 60;
 
-    // Start the timer
-    const timerInterval = setInterval(() => {
-      // Calculate the remaining time
-      const now = new Date();
-      const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-      const remainingSeconds = targetSeconds - nowSeconds;
 
-      if (remainingSeconds <= 0) {
-        // Timer expired, do something
-        clearInterval(timerInterval);
-        console.log("Timer expired!");
-      } else {
-        // Display remaining time or perform other actions
 
-        console.log(`Remaining time: ${Math.floor(remainingSeconds / 60)} minutes ${remainingSeconds % 60} seconds`);
+  function calculateRemainingTime(referenceTime,status) {
+    clearInterval(timerInterval);
+    // Parse the reference time and set it to the current date
+    var referenceDate = new Date();
+    var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
+    referenceDate.setHours(hours, minutes, seconds);
+
+    // Set the target time by adding 5 minutes to the reference time
+    var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);//+ 5*1000);
+    
+    function updateRemainingTime() {
+        // Calculate the difference in milliseconds
+          var timeDifference = targetTime - new Date();
+          
+          // Convert the time difference to minutes and seconds
+          var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+          var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+          
+          // Display the remaining time in the HTML element
+          document.getElementById("remainingTime").textContent = remainingMinutes + ":" + remainingSeconds;
+          
+          // Check if the target time has passed
+          console.log("inner_func")
+          if (timeDifference <= 0 || status!="allowed") {
+              console.log("inner_stop")
+              clearInterval(timerInterval);
+              document.getElementById("remainingTime").textContent = "Time expired!";
+          }
+
+          }
+        //   else{
+        //     clearInterval(timerInterval);
+        //   document.getElementById("remainingTime").textContent = "Time expired!";
+          
+        // }
+      
+      // Clear the previous interval before starting a new one
+      // Update the remaining time every second
+      console.log("outer")
+      if (status=="allowed"){
+        console.log("inner1")
+        var timerInterval = setInterval(updateRemainingTime, 1000);
+        console.log("inner1")
+        updateRemainingTime(); // Initial call to set the initial time
       }
-    }, 1000); // Update every second
-}
 
-// Example usage with your time format
-const referenceTime = "19:11:13";
-// startTimer(referenceTime);
+
+}
+// calculateRemainingTime("19:54:59");
+
+
+
+
+
+
+
+
+// function calculateRemainingTime(referenceTime) {
+//     // Parse the reference time and set it to the current date
+//     var referenceDate = new Date();
+//     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
+//     referenceDate.setHours(hours, minutes, seconds);
+
+//     // Set the target time by adding 5 minutes to the reference time
+//     var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);
+
+//     // Calculate the difference in milliseconds
+//     var timeDifference = targetTime - new Date();
+
+//     // Convert the time difference to minutes and seconds
+//     var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+//     var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+//     // Display the remaining time
+//     console.log("Remaining time: " + remainingMinutes + " minutes and " + remainingSeconds + " seconds");
+// }
+
+// Example usage with the given time "14:19:53"
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -546,39 +610,46 @@ const referenceTime = "19:11:13";
     })
       .then(response => response.json())
       .then(data => {
-
+        
         if (data[0] === true) {
           contain.innerHTML = `<button type="button" id="a1"  class="btn btn-success" onclick="toggle_true_false()">Allowed ${selectedValue}</button>`;
+          calculateRemainingTime(data[1],"allowed");
         }
         else {
           contain.innerHTML = `<button type="button" id="a2"  class="btn btn-secondary" onclick="toggle_true_false()">Allow ${selectedValue}</button>`;
+          calculateRemainingTime(data[1],"not_allowed");
+          // document.getElementById("remainingTime").textContent = "Time expired!";
+          
         }
       })
       .catch(error => {
         console.log("error : ", error);
       });
-  }
+    }
 
+    
 
-
-  //this will run on loading page , also when section is changed.
-  function check_on_page_load(section = '2B') {
-    let contain = document.getElementById('allow_button');
-    fetch('/check_true_or_false', {
+    //this will run on loading page , also when section is changed.
+    function check_on_page_load(section = '2B') {
+      let contain = document.getElementById('allow_button');
+      fetch('/check_true_or_false', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ selectedValue: section }),
     })
-      .then(response => response.json())
+    .then(response => response.json())
       .then(data => {
         // let button = document.createElement('button');
         if (data[0] === true) {
           contain.innerHTML = `<button type="button" id="a1" class="btn btn-success" onclick="toggle_true_false()">Allowed ${section}</button>`;
+          calculateRemainingTime(data[1],"allowed");
         }
         else {
           contain.innerHTML = `<button type="button" id="a2" class="btn btn-secondary" onclick="toggle_true_false()">Allow ${section}</button>`;
+          calculateRemainingTime(data[1],"not_allowed");
+          // document.getElementById("remainingTime").textContent = "Time expired!";
         }
         // contain.appendChild(button);
 
@@ -588,7 +659,7 @@ const referenceTime = "19:11:13";
       });
   }
 
-  check_on_page_load();
+  // check_on_page_load();
   getSelectedStudent();
 
 

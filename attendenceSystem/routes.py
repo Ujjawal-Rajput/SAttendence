@@ -100,6 +100,7 @@ def toggle_true_false():
         data = request.get_json()
         users = Auth.query.filter_by(section=data['section'])
         now = False
+        timeis=0
         for i in users:
             # print(i.allow_or_not)
             # timer = None
@@ -111,13 +112,14 @@ def toggle_true_false():
             else:
                 i.allow_or_not = True
                 now = True
-                timer = threading.Timer(8, setToFalse_after10, args=(data['section'],) ).start()
+                timer = threading.Timer(300, setToFalse_after10, args=(data['section'],) ).start()
                 # setToFalse_after10()
             i.date_posted = datetime.now().strftime("%H:%M:%S")
+            timeis = i.date_posted
         db.session.commit()
         # import time
         # time.sleep(1)
-        return [now]
+        return [now,timeis]
     else:
         return {"error":'Fetching failed...'}
     
@@ -129,7 +131,8 @@ def check_true_false():
         users = Auth.query.filter_by(section=data['selectedValue'])
         for i in users:
             valueis = i.allow_or_not
-        return [valueis]
+            timeis = i.date_posted
+        return [valueis,timeis]
     else:
         return {"error":'Fetching failed...'}
     
