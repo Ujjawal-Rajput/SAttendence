@@ -9,6 +9,8 @@ import face_recognition
 import numpy as np
 from datetime import datetime
 import geopy.distance
+import threading 
+# import schedule
 # from sqlalchemy import text ,MetaData, Column, String, Date, DateTime, Integer, Table
 # from sqlalchemy.schema import MetaData
 # from apscheduler.schedulers.background import BackgroundScheduler
@@ -65,7 +67,13 @@ def coordinatorPage():
         # return render_template("coordinatorPage.html", data = toshow)
     return redirect(url_for('login'))
 
-
+def setToFalse_after10(data):
+    print(data)
+    with app.app_context():
+        user = Auth.query.filter_by(section=data)
+        for i in user:
+            i.allow_or_not = False
+        db.session.commit()
 
 
 #all functions that are called by AJAX by post method only.
@@ -93,13 +101,19 @@ def toggle_true_false():
         users = Auth.query.filter_by(section=data['section'])
         now = False
         for i in users:
-            print(i.allow_or_not)
+            # print(i.allow_or_not)
+            # timer = None
             if i.allow_or_not:
                 i.allow_or_not = False
                 now = False
+                # if timer is not None:# and timer.is_alive():
+                #     timer.cancel()
             else:
                 i.allow_or_not = True
                 now = True
+                timer = threading.Timer(8, setToFalse_after10, args=(data['section'],) ).start()
+                # setToFalse_after10()
+            i.date_posted = datetime.now().strftime("%H:%M:%S")
         db.session.commit()
         # import time
         # time.sleep(1)

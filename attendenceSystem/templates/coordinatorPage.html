@@ -281,6 +281,51 @@
   //   }
   //   return data;
   // }
+
+
+
+
+
+
+  function startTimer(referenceTime) {
+    // Split the reference time into hours, minutes, and seconds
+    const [hours, minutes, seconds] = referenceTime.split(":").map(Number);
+
+    // Calculate the total seconds from the reference time
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+    // Add 5 minutes (5 * 60 seconds) to the reference time
+    const targetSeconds = totalSeconds + 5 * 60;
+
+    // Start the timer
+    const timerInterval = setInterval(() => {
+      // Calculate the remaining time
+      const now = new Date();
+      const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      const remainingSeconds = targetSeconds - nowSeconds;
+
+      if (remainingSeconds <= 0) {
+        // Timer expired, do something
+        clearInterval(timerInterval);
+        console.log("Timer expired!");
+      } else {
+        // Display remaining time or perform other actions
+
+        console.log(`Remaining time: ${Math.floor(remainingSeconds / 60)} minutes ${remainingSeconds % 60} seconds`);
+      }
+    }, 1000); // Update every second
+}
+
+// Example usage with your time format
+const referenceTime = "19:11:13";
+// startTimer(referenceTime);
+
+
+
+
+
+
+
   
   let modal_buttons = document.getElementById('modal-buttons');
   function coordinatorMark(rollno,count,lecture){
