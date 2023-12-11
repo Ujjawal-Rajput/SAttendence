@@ -100,19 +100,21 @@ def toggle_true_false():
         data = request.get_json()
         users = Auth.query.filter_by(section=data['section'])
         now = False
-        timeis=0
+        timeis=None
+        timeris = threading.Timer(10, setToFalse_after10, args=(data['section'],) )
+        print(type(timeris))
         for i in users:
             # print(i.allow_or_not)
             # timer = None
             if i.allow_or_not:
                 i.allow_or_not = False
                 now = False
-                # if timer is not None:# and timer.is_alive():
-                #     timer.cancel()
+                timeris.cancel()
             else:
                 i.allow_or_not = True
                 now = True
-                timer = threading.Timer(300, setToFalse_after10, args=(data['section'],) ).start()
+                # timeris = threading.Timer(10, setToFalse_after10, args=(data['section'],) )
+                timeris.start()
                 # setToFalse_after10()
             i.date_posted = datetime.now().strftime("%H:%M:%S")
             timeis = i.date_posted

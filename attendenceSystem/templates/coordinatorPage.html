@@ -286,61 +286,105 @@
 
 
 
-
-
-
-
-
-
-
-  function calculateRemainingTime(referenceTime,status) {
-    clearInterval(timerInterval);
+var timerInterval;
+var timerEndTime; 
+function calculateRemainingTime(referenceTime) {
     // Parse the reference time and set it to the current date
     var referenceDate = new Date();
     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
     referenceDate.setHours(hours, minutes, seconds);
-
-    // Set the target time by adding 5 minutes to the reference time
-    var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);//+ 5*1000);
     
-    function updateRemainingTime() {
-        // Calculate the difference in milliseconds
-          var timeDifference = targetTime - new Date();
-          
-          // Convert the time difference to minutes and seconds
-          var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-          var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-          
-          // Display the remaining time in the HTML element
-          document.getElementById("remainingTime").textContent = remainingMinutes + ":" + remainingSeconds;
-          
-          // Check if the target time has passed
-          console.log("inner_func")
-          if (timeDifference <= 0 || status!="allowed") {
-              console.log("inner_stop")
-              clearInterval(timerInterval);
-              document.getElementById("remainingTime").textContent = "Time expired!";
-          }
+    // Set the target time by adding 5 minutes to the reference time
+    timerEndTime = new Date(referenceDate.getTime() + 10 * 1000);// + 5*1000);
 
-          }
-        //   else{
-        //     clearInterval(timerInterval);
-        //   document.getElementById("remainingTime").textContent = "Time expired!";
-          
-        // }
-      
-      // Clear the previous interval before starting a new one
-      // Update the remaining time every second
-      console.log("outer")
-      if (status=="allowed"){
-        console.log("inner1")
-        var timerInterval = setInterval(updateRemainingTime, 1000);
-        console.log("inner1")
-        updateRemainingTime(); // Initial call to set the initial time
-      }
-
-
+    // Update the remaining time every second
+    timerInterval = setInterval(updateRemainingTime, 1000);
+    updateRemainingTime(); // Initial call to set the initial time
+    
 }
+
+function stopTimer() {
+    // Clear the interval and reset the button text
+    clearInterval(timerInterval);
+  }
+  
+  function updateRemainingTime() {
+    // Calculate the remaining time
+    var currentTime = new Date().getTime();
+    var timeDifference = timerEndTime - currentTime;
+    
+    // Convert the time difference to minutes and seconds
+    var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    
+    // Display the remaining time in the HTML element
+    document.getElementById("remainingTime").textContent = "Remaining time " + remainingMinutes + " : " + remainingSeconds;
+    
+    // Check if the time has expired
+    // console.log("1. ",timeDifference)
+    if (timeDifference <= 0) {
+      // console.log("2. ",timeDifference)
+      stopTimer();
+      document.getElementById("remainingTime").textContent = "Time over !";
+
+      // let selectedStudent = document.querySelector('input[name="btnradio"]:checked');
+      // let selectedValue = selectedStudent.value;
+      // check_on_page_load(selectedValue);
+      // getSelectedStudent();
+    }
+}
+
+
+
+
+//   function calculateRemainingTime(referenceTime,status) {
+//     // Parse the reference time and set it to the current date
+//     var referenceDate = new Date();
+//     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
+//     referenceDate.setHours(hours, minutes, seconds);
+    
+//     // Set the target time by adding 5 minutes to the reference time
+//     var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);//+ 5*1000);
+    
+//     function updateRemainingTime() {
+//         // Calculate the difference in milliseconds
+//         var timeDifference = targetTime - new Date();
+        
+//         // Convert the time difference to minutes and seconds
+//           var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+//           var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+          
+//           // Display the remaining time in the HTML element
+//           document.getElementById("remainingTime").textContent = remainingMinutes + ":" + remainingSeconds;
+          
+//           // Check if the target time has passed
+//           console.log("inner_func")
+//           if (timeDifference <= 0 || status!="allowed") {
+//             console.log("inner_stop")
+//               clearInterval(timerInterval);
+//               document.getElementById("remainingTime").textContent = "Time expired!";
+//           }
+
+//           }
+//         //   else{
+//         //     clearInterval(timerInterval);
+//         //   document.getElementById("remainingTime").textContent = "Time expired!";
+          
+//         // }
+      
+//       // Clear the previous interval before starting a new one
+//       clearInterval(timerInterval);
+//       // Update the remaining time every second
+//       console.log("outer")
+//       if (status=="allowed"){
+//         console.log("inner1")
+//         var timerInterval = setInterval(updateRemainingTime, 1000);
+//         console.log("inner1")
+//         updateRemainingTime(); // Initial call to set the initial time
+//       }
+
+
+// }
 // calculateRemainingTime("19:54:59");
 
 
@@ -613,12 +657,13 @@
         
         if (data[0] === true) {
           contain.innerHTML = `<button type="button" id="a1"  class="btn btn-success" onclick="toggle_true_false()">Allowed ${selectedValue}</button>`;
-          calculateRemainingTime(data[1],"allowed");
+          calculateRemainingTime(data[1]);
         }
         else {
           contain.innerHTML = `<button type="button" id="a2"  class="btn btn-secondary" onclick="toggle_true_false()">Allow ${selectedValue}</button>`;
-          calculateRemainingTime(data[1],"not_allowed");
-          // document.getElementById("remainingTime").textContent = "Time expired!";
+          // calculateRemainingTime(data[1],"not_allowed");
+          stopTimer();
+          // document.getElementById("remainingTime").textContent = "";
           
         }
       })
@@ -644,12 +689,13 @@
         // let button = document.createElement('button');
         if (data[0] === true) {
           contain.innerHTML = `<button type="button" id="a1" class="btn btn-success" onclick="toggle_true_false()">Allowed ${section}</button>`;
-          calculateRemainingTime(data[1],"allowed");
+          calculateRemainingTime(data[1]);
         }
         else {
           contain.innerHTML = `<button type="button" id="a2" class="btn btn-secondary" onclick="toggle_true_false()">Allow ${section}</button>`;
-          calculateRemainingTime(data[1],"not_allowed");
-          // document.getElementById("remainingTime").textContent = "Time expired!";
+          // calculateRemainingTime(data[1],"not_allowed");
+          stopTimer();
+          document.getElementById("remainingTime").textContent = "Time over !";
         }
         // contain.appendChild(button);
 
