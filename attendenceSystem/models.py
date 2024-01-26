@@ -1,6 +1,7 @@
 from datetime import datetime
 from attendenceSystem import db, login_manager
 from flask_login import UserMixin
+from sqlalchemy.dialects.postgresql import ARRAY
 
 
 
@@ -54,11 +55,12 @@ class MarkAttendence(db.Model):
     # user_id = db.Column(db.Integer, db.ForeignKey('user.rollno'), nullable=False)
     section = db.Column(db.String(20),nullable=False)
     date_posted = db.Column(db.String(30) , nullable=False, default=datetime.now().strftime("%H:%M:%S"))
-    mark = db.Column(db.String(20),default="00000000")
+    mark = db.Column(db.JSON, default={datetime.now().strftime('%d/%m/%Y'):"00000000"})
+    # mark = db.Column(db.String(20),default="00000000")
     # mark = db.Column(db.String(20),default=0)
 
     def __repr__(self):
-        return f"MarkAttendence('{self.rollno}','{self.section}', '{self.date_posted}', '{self.mark}')"
+        return f"MarkAttendence('{self.id}','{self.rollno}','{self.section}', '{self.date_posted}', '{self.mark}')"
 
 class Auth(db.Model):
     # __tablename__ = 'Post'  # Specify the actual table name in your database
@@ -67,6 +69,7 @@ class Auth(db.Model):
     date_posted = db.Column(db.String(20), nullable=False, default=datetime.now().strftime("%H:%M:%S"))
     allow_or_not = db.Column(db.Boolean, nullable=False, default=False)
     current_lecture = db.Column(db.Integer, nullable=False, default=1)
+    coordinates = db.Column(db.JSON, default={"list":[]})
     # all_coordinates
     # selected_coordinate
     
@@ -75,7 +78,7 @@ class Auth(db.Model):
     # user_id = db.Column(db.Integer, db.ForeignKey('user.rollno'), nullable=False)
 
     def __repr__(self):
-        return f"Auth('{self.id}','{self.section}', '{self.date_posted}', '{self.allow_or_not},'{self.current_lecture}')"
+        return f"Auth('{self.id}','{self.section}', '{self.date_posted}', '{self.allow_or_not},'{self.current_lecture}','{self.coordinates}')"
     
 
 

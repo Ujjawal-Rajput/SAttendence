@@ -23,6 +23,11 @@
 </article>
 {% endfor %} -->
 
+<div style="letter-spacing: 2px;">
+    <h3 class="">Current Lecture : {{lecture}} </h3>
+    <!-- some code is in sch2 -->
+</div>
+
 
 <div class="content-section">
     {% if can==True %}
@@ -49,28 +54,12 @@
 
 
 
-<div style="letter-spacing: 2px;">
-    <h3 class="mt-5">Current Lecture : {{lecture}} </h3>
-    <h3 class="mt-5">Today </h3>
-    <div class="coordination">
-    {% for i in range(lecture+1) %}
-    {% if data[0].attendence[i]=='1' %}
-        <span class="badge text-bg-info">Present</span>
-        <span>in Lec-{{ loop.index }}</span>
-    <!-- </div> -->
-    {% else %}
-    <!-- <div class="coordination"> -->
-        <span class="badge text-bg-danger">Absent</span>
-        <span>in Lec-{{ loop.index }}</span>
-        {% endif %}
-        {% endfor %}
-    </div>
-</div> 
-
 
 <h3 class="mt-5">My Attendence :</h3>
+{% if data[0].attendence!={} %}
+<button class="btn btn-outline-secondary" onclick="printTable()">Print Table</button>
 <div style="overflow-x: auto;">
-    <table class="table mt-2">
+    <table class="table mt-2" id="myattendence">
         <thead class="border-black border-2">
             <tr>
                 <th scope="col">S.No.</th>
@@ -87,43 +76,48 @@
             </tr>
         </thead>
         <tbody class="border-black border-2">
-            {% for i in data %}
+            <!-- {% for i in data %} -->
+            {% for j in data[0].attendence.items() %}
             <tr>
-                <th scope="row">{{ loop.index }}</th>
-                <td>{{i.date}}</td>
-                {% for j in i.attendence %}
-                {% if j=='1' %}
+                <th scope="row">{{ loop.index }}.</th>
+                <td>{{j[0]}}</td>
+                {% for k in j[1] %}
+                {% if k=='1' %}
                 <td>
                     <div class="image-container">
                         <img width="25px" height="25px"
-                            src='{{ url_for("static", filename="/project_images/present.png") }}' alt="{{ j }}">
-                        <div class="image-text">{{ i.time }}</div>
+                            src='{{ url_for("static", filename="/project_images/present.png") }}' alt="{{ k }}">
+                        <!-- <div class="image-text">{{ data[0].time }}</div> -->
                     </div>
                 </td>
                 {% else %}
                 <td>
                     <img width="25px" height="25px" src='{{ url_for("static", filename="/project_images/absent.png") }}'
-                        alt="{{ j }}">
+                        alt="{{ k }}">
                 </td>
 
                 {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
+            {% endfor %}
             <!-- <tr>
         <th scope="row">2</th>
         <td>Jacob</td>
         <td>Thornton</td>
         <td>@fat</td>
-      </tr>
-      <tr>
+    </tr>
+    <tr>
         <th scope="row">3</th>
         <td colspan="2">Larry the Bird</td>
         <td>@twitter</td>
-      </tr> -->
+    </tr> -->
         </tbody>
     </table>
 </div>
+{% else %}
+<p style="color:grey;">No previous data</p>
+{% endif %}
 
 
 <script>
@@ -189,7 +183,7 @@
                     canvas.toBlob(blob => {
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
-                        console.log(latitude, longitude);
+                        // console.log(latitude, longitude);
 
 
                         const formData = new FormData();
@@ -233,6 +227,41 @@
             }
         }
     });
+
+
+    function printTable() {
+        var printWindow = window.open('', '_blank');
+        var tableHtml = document.getElementById('myattendence').outerHTML;
+        let todayDate = new Date().toJSON().slice(0, 10);
+        console.log(todayDate)
+
+        printWindow.document.write(`<html><head><title>${todayDate}</title>`);
+        printWindow.document.write('<link rel="stylesheet" type="text/css" href="../static/css/printTable.css">');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(tableHtml);
+        printWindow.document.write('</body></html>');
+
+        // Wait for images to load before triggering the print
+        var images = printWindow.document.querySelectorAll('img');
+        var imagesLoaded = 0;
+
+        function checkAllImagesLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === images.length) {
+                // All images are loaded, trigger the print operation
+                printWindow.print();
+                printWindow.document.close();
+            }
+        }
+
+        images.forEach(function (img) {
+            if (img.complete) {
+                checkAllImagesLoaded();
+            } else {
+                img.onload = checkAllImagesLoaded;
+            }
+        });
+    }
 </script>
 
 

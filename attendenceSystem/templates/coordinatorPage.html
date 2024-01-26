@@ -1,12 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+<h2>Choose your section</h2>
+<div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="sectionButtons">
   <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="2A" onchange="getSelectedStudent()"
     autocomplete="off">
   <label class="btn btn-outline-primary" for="btnradio1">2A</label>
 
   <input type="radio" class="btn-check" name="btnradio" id="btnradio2" value="2B" onchange="getSelectedStudent()"
-    autocomplete="off" checked>
+    autocomplete="off">
+  <!-- <input type="radio" class="btn-check" name="btnradio" id="btnradio2" value="2B" onchange="getSelectedStudent()" autocomplete="off" checked> -->
   <label class="btn btn-outline-primary" for="btnradio2">2B</label>
 
   <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="2C" onchange="getSelectedStudent()"
@@ -28,45 +30,96 @@
 </div>
 <br>
 
+<div id="allDetails" style="display: none;">
 
-<div class="btn-group mt-3" role="group" aria-label="Basic radio toggle button group">
+  <div class="btn-group mt-3 button-groups" role="group" aria-label="Basic radio toggle button group">
 
-  <input type="radio" class="btn-check" name="btnradio2" id="btnradio7" value="P" onchange="populateTable()"
-    autocomplete="off" checked>
-  <label class="btn btn-outline-primary" for="btnradio7">Present</label>
+    <input type="radio" class="btn-check" name="btnradio2" id="btnradio7" value="P" onchange="populateTable()"
+      autocomplete="off" checked>
+    <label class="btn btn-outline-primary" for="btnradio7">Present</label>
 
-  <input type="radio" class="btn-check" name="btnradio2" id="btnradio8" value="A" onchange="populateTable()"
-    autocomplete="off">
-  <label class="btn btn-outline-primary" for="btnradio8">Absent</label>
-
-  
-  <button class="btn btn-primary bg-steel w-20" type="button" onclick="getSelectedStudent()">Refresh</button>
+    <input type="radio" class="btn-check" name="btnradio2" id="btnradio8" value="A" onchange="populateTable()"
+      autocomplete="off">
+    <label class="btn btn-outline-primary" for="btnradio8">Absent</label>
 
 
-  <!-- <input type="radio" class="btn-check" name="btnradio2" id="btnradio9" value="B" onchange="getSelectedtype(this.value)" autocomplete="off">
+    <button class="btn btn-primary bg-steel w-20 h-auto" type="button" onclick="getSelectedStudent()">Refresh</button>
+
+
+    <!-- <input type="radio" class="btn-check" name="btnradio2" id="btnradio9" value="B" onchange="getSelectedtype(this.value)" autocomplete="off">
   <label class="btn btn-outline-primary" for="btnradio9">Bunkers</label> -->
 
-</div>
+  </div>
+
+  <!--make input field to set new coordinates in case classes are merged / changed and again reset original coordinates to oroginal class.-->
+  <div class="coordination" style="background-color: rgb(238, 243, 243);">
+    <h3>Coordinates</h3>
+    <div class="loader" id="info-loader"></div>
+    <div id="classDetails">
+      <form id="changeCoordinates">
+        <div class="d-flex mt-3">
+          <select class="form-select" aria-label="Default select example" id="selectCoordinates">
+
+            <!-- <option>select class / coordinates</option> -->
+            <!-- <option value="123.1.2.1" selected>2B (123.1.2.1)</option>
+          <option value="123.1.3.1"> 2A (123.1.3.1)</option>
+          <option value="123.1.4.1">Python Lab (123.1.4.1)</option> -->
+
+          </select>
+          <div class="d-grid gap-2 col-3">
+            <button class="btn btn-primary bg-steel" type="submit">Change</button>
+          </div>
+        </div>
+        <div id="message"></div>
+      </form>
+      <div class="d-flex mt-3">
+        <button class="btn btn-primary bg-steel" type="button" onclick="openPopup()">Add new</button>
+      </div>
+
+      <hr>
+      <h3>Today's stats</h3>
+      <p>Total Present : <span id="present_number"></span></p>
+      <p>Total Absent : <span id="absent_number"></span></p>
 
 
-<!--make input field to set new coordinates in case classes are merged / changed and again reset original coordinates to oroginal class.-->
-<div class="coordination">
-  <div class="d-flex mt-3">
-    <select class="form-select" aria-label="Default select example">
-      <!-- <option>select class / coordinates</option> -->
-      <option value="123.1.2.1" selected>2B (123.1.2.1)</option>
-      <option value="123.1.3.1"> 2A (123.1.3.1)</option>
-      <option value="123.1.4.1">Python Lab (123.1.4.1)</option>
+      <hr>
+      <h3>Allow this class</h3>
+      <div id="allow_button"></div>
+      <span id="remainingTime"></span>
+      <!-- <button class="btn btn-outline-secondary" style="background-color: green;color:#fff" id="allow_or_deny" onclick="allow_or_deny()" >
+    </button> -->
+      <!-- <button type="button" class="btn btn-outline-secondary" disabled>Button</button> -->
 
-    </select>
-    <div class="d-grid gap-2 col-3">
-      <button class="btn btn-primary bg-steel" type="button" onclick="">Change</button>
+      <!-- {% if allowed==True %} -->
+
+      <!-- {% else %}
+      <button id="allow_or_deny"><p>Allow</p></button>
+    {% endif %} -->
     </div>
   </div>
-  <div class="d-flex mt-3">
-    <button class="btn btn-primary bg-steel" type="button" onclick="">Add new</button>
+
+
+  <!-- The popup form -->
+  <div class="popup" id="myPopup">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <h2>Enter Coordinates</h2>
+      <form action="#" method="post" id="coordinateForm" class="coordinates_form">
+
+        <label for="known_as">ClassName / LabName :</label>
+        <input type="text" id="known_as" name="known_as" required>
+
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" required>
+
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" required>
+
+        <button type="submit">Submit</button>
+        <div id="form_message"></div>
+      </form>
+    </div>
   </div>
-</div>
 
 
 
@@ -74,9 +127,8 @@
 
 
 
-
-<!-- Modal -->
-<!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <!-- Modal -->
+  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -97,7 +149,7 @@
 
 
 
-<!-- <div id="myModal" class="modal">
+  <!-- <div id="myModal" class="modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -119,30 +171,31 @@
 
 
 
-<div class="modal fade" id="attendanceModal" tabindex="-1" role="dialog" aria-labelledby="attendanceModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal fade" id="attendanceModal" tabindex="-1" role="dialog" aria-labelledby="attendanceModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
       <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="attendanceModalLabel">Details of : <span id="modalName"></span></h5>
-              <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <div class="modal-header">
+          <h5 class="modal-title" id="attendanceModalLabel">Details of : <span id="modalName"></span></h5>
+          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
               </button> -->
-              <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <!-- Modal content goes here -->
-              <p id="modalTime"></p>
-              <p>Rollno : <span id="modalRollNo"></span></p>
-              <p>Lecture : <span id="modalLecture"></span></p>
-              <div id="modal-buttons">
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Modal content goes here -->
+          <p id="modalTime"></p>
+          <p>Rollno : <span id="modalRollNo"></span></p>
+          <p>Lecture : <span id="modalLecture"></span></p>
+          <div id="modal-buttons">
 
-              </div>
-              <!-- <button type="button" class="btn btn-success" onclick="markAttendance('present')">Present</button>
+          </div>
+          <!-- <button type="button" class="btn btn-success" onclick="markAttendance('present')">Present</button>
               <button type="button" class="btn btn-danger" onclick="markAttendance('absent')">Absent</button> -->
-          </div>
+        </div>
       </div>
+    </div>
   </div>
-</div>
 
 
 
@@ -150,49 +203,35 @@
 
 
 
-<div class="list-group mt-3">
-
-  <p>Total Present : <span id="present_number"></span></p>
-  <p>Total Absent : <span id="absent_number"></span></p>
-
-  <div id="allow_button"></div>
-  <span id="remainingTime"></span>
-  <!-- <button class="btn btn-outline-secondary" style="background-color: green;color:#fff" id="allow_or_deny" onclick="allow_or_deny()" >
-  </button> -->
-  <!-- <button type="button" class="btn btn-outline-secondary" disabled>Button</button> -->
-
-  <!-- {% if allowed==True %} -->
-
-  <!-- {% else %}
-    <button id="allow_or_deny"><p>Allow</p></button>
-  {% endif %} -->
-
-  <div class="container mt-4" style="overflow-x: auto;">
-    <table class="table table-bordered" id="attendanceTable">
-      <thead>
-        <tr>
-          <th>S.no</th>
-          <th>Name</th>
-          <th>Roll No</th>
-          <th>Lec-1</th>
-          <th>Lec-2</th>
-          <th>Lec-3</th>
-          <th>Lec-4</th>
-          <th>Lec-5</th>
-          <th>Lec-6</th>
-          <th>Lec-7</th>
-          <th>Lec-8</th>
-        </tr>
-      </thead>
-      <tbody id="attendanceTableBody">
-        <!-- adding rows using JavaScript -->
-      </tbody>
-    </table>
-    <div class="loader" id="loader"></div>
+  <div class="list-group mt-4">
+    <h3>Students list</h3>
+    <button class="btn btn-outline-secondary" onclick="printTable()">Print Table</button>
+    <div class="container mt-2" style="overflow-x: auto;">
+      <table class="table table-bordered mt-2" id="attendanceTable">
+        <thead>
+          <tr>
+            <th>S.no</th>
+            <th>Name</th>
+            <th>Roll No</th>
+            <th>Lec-1</th>
+            <th>Lec-2</th>
+            <th>Lec-3</th>
+            <th>Lec-4</th>
+            <th>Lec-5</th>
+            <th>Lec-6</th>
+            <th>Lec-7</th>
+            <th>Lec-8</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTableBody">
+          <!-- adding rows using JavaScript -->
+        </tbody>
+      </table>
+      <div class="loader" id="loader"></div>
+    </div>
   </div>
-</div>
 
-<!-- <div>
+  <!-- <div>
      <button type="button" class="list-group-item list-group-item-action active" style="background-color: steelblue;"
       aria-current="true">
       Present students
@@ -206,7 +245,7 @@
 
 
 
-<!-- <div>
+  <!-- <div>
       <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
         Absent students
       </button>
@@ -216,7 +255,7 @@
       <button type="button" class="list-group-item list-group-item-action" disabled>A disabled button item</button>
 
     </div> -->
-
+</div>
 
 
 <script>
@@ -230,13 +269,21 @@
   // Function to show the loader
   function showLoader() {
     const loader = document.getElementById("loader");
+    const infoLoader = document.getElementById("info-loader");
+    const classDetails = document.getElementById("classDetails");
     loader.style.display = "block";
+    infoLoader.style.display = "block";
+    classDetails.style.display = "none";
   }
 
   // Function to hide the loader
   function hideLoader() {
     const loader = document.getElementById("loader");
+    const infoLoader = document.getElementById("info-loader");
+    const classDetails = document.getElementById("classDetails");
     loader.style.display = "none";
+    infoLoader.style.display = "none";
+    classDetails.style.display = "block";
   }
 
   //function to differentiate present and absent students
@@ -286,40 +333,39 @@
 
 
 
-var timerInterval;
-var timerEndTime; 
-function calculateRemainingTime(referenceTime) {
+  var timerInterval;
+  var timerEndTime;
+  function calculateRemainingTime(referenceTime) {
     // Parse the reference time and set it to the current date
-    var referenceDate = new Date();
-    var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
+    let referenceDate = new Date();
+    let [hours, minutes, seconds] = referenceTime.split(':').map(Number);
     referenceDate.setHours(hours, minutes, seconds);
-    
+
     // Set the target time by adding 5 minutes to the reference time
-    timerEndTime = new Date(referenceDate.getTime() + 10 * 1000);// + 5*1000);
+    timerEndTime = new Date(referenceDate.getTime() + 300 * 1000);// + 5*1000);
 
     // Update the remaining time every second
     timerInterval = setInterval(updateRemainingTime, 1000);
-    updateRemainingTime(); // Initial call to set the initial time
-    
-}
+    updateRemainingTime(); // Initial call to set the initial time 
+  }
 
-function stopTimer() {
+  function stopTimer() {
     // Clear the interval and reset the button text
     clearInterval(timerInterval);
   }
-  
+
   function updateRemainingTime() {
     // Calculate the remaining time
-    var currentTime = new Date().getTime();
-    var timeDifference = timerEndTime - currentTime;
-    
+    let currentTime = new Date().getTime();
+    let timeDifference = timerEndTime - currentTime;
+
     // Convert the time difference to minutes and seconds
-    var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-    var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-    
+    let remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+    let remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
     // Display the remaining time in the HTML element
     document.getElementById("remainingTime").textContent = "Remaining time " + remainingMinutes + " : " + remainingSeconds;
-    
+
     // Check if the time has expired
     // console.log("1. ",timeDifference)
     if (timeDifference <= 0) {
@@ -332,94 +378,89 @@ function stopTimer() {
       // check_on_page_load(selectedValue);
       // getSelectedStudent();
     }
-}
+  }
 
 
 
 
-//   function calculateRemainingTime(referenceTime,status) {
-//     // Parse the reference time and set it to the current date
-//     var referenceDate = new Date();
-//     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
-//     referenceDate.setHours(hours, minutes, seconds);
-    
-//     // Set the target time by adding 5 minutes to the reference time
-//     var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);//+ 5*1000);
-    
-//     function updateRemainingTime() {
-//         // Calculate the difference in milliseconds
-//         var timeDifference = targetTime - new Date();
-        
-//         // Convert the time difference to minutes and seconds
-//           var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-//           var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-          
-//           // Display the remaining time in the HTML element
-//           document.getElementById("remainingTime").textContent = remainingMinutes + ":" + remainingSeconds;
-          
-//           // Check if the target time has passed
-//           console.log("inner_func")
-//           if (timeDifference <= 0 || status!="allowed") {
-//             console.log("inner_stop")
-//               clearInterval(timerInterval);
-//               document.getElementById("remainingTime").textContent = "Time expired!";
-//           }
+  //   function calculateRemainingTime(referenceTime,status) {
+  //     // Parse the reference time and set it to the current date
+  //     var referenceDate = new Date();
+  //     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
+  //     referenceDate.setHours(hours, minutes, seconds);
 
-//           }
-//         //   else{
-//         //     clearInterval(timerInterval);
-//         //   document.getElementById("remainingTime").textContent = "Time expired!";
-          
-//         // }
-      
-//       // Clear the previous interval before starting a new one
-//       clearInterval(timerInterval);
-//       // Update the remaining time every second
-//       console.log("outer")
-//       if (status=="allowed"){
-//         console.log("inner1")
-//         var timerInterval = setInterval(updateRemainingTime, 1000);
-//         console.log("inner1")
-//         updateRemainingTime(); // Initial call to set the initial time
-//       }
+  //     // Set the target time by adding 5 minutes to the reference time
+  //     var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);//+ 5*1000);
 
+  //     function updateRemainingTime() {
+  //         // Calculate the difference in milliseconds
+  //         var timeDifference = targetTime - new Date();
 
-// }
-// calculateRemainingTime("19:54:59");
+  //         // Convert the time difference to minutes and seconds
+  //           var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  //           var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+  //           // Display the remaining time in the HTML element
+  //           document.getElementById("remainingTime").textContent = remainingMinutes + ":" + remainingSeconds;
+
+  //           // Check if the target time has passed
+  //           console.log("inner_func")
+  //           if (timeDifference <= 0 || status!="allowed") {
+  //             console.log("inner_stop")
+  //               clearInterval(timerInterval);
+  //               document.getElementById("remainingTime").textContent = "Time expired!";
+  //           }
+
+  //           }
+  //         //   else{
+  //         //     clearInterval(timerInterval);
+  //         //   document.getElementById("remainingTime").textContent = "Time expired!";
+
+  //         // }
+
+  //       // Clear the previous interval before starting a new one
+  //       clearInterval(timerInterval);
+  //       // Update the remaining time every second
+  //       console.log("outer")
+  //       if (status=="allowed"){
+  //         console.log("inner1")
+  //         var timerInterval = setInterval(updateRemainingTime, 1000);
+  //         console.log("inner1")
+  //         updateRemainingTime(); // Initial call to set the initial time
+  //       }
 
 
-
-
-
-
-
-
-// function calculateRemainingTime(referenceTime) {
-//     // Parse the reference time and set it to the current date
-//     var referenceDate = new Date();
-//     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
-//     referenceDate.setHours(hours, minutes, seconds);
-
-//     // Set the target time by adding 5 minutes to the reference time
-//     var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);
-
-//     // Calculate the difference in milliseconds
-//     var timeDifference = targetTime - new Date();
-
-//     // Convert the time difference to minutes and seconds
-//     var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-//     var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-//     // Display the remaining time
-//     console.log("Remaining time: " + remainingMinutes + " minutes and " + remainingSeconds + " seconds");
-// }
-
-// Example usage with the given time "14:19:53"
+  // }
+  // calculateRemainingTime("19:54:59");
 
 
 
 
 
+
+
+
+  // function calculateRemainingTime(referenceTime) {
+  //     // Parse the reference time and set it to the current date
+  //     var referenceDate = new Date();
+  //     var [hours, minutes, seconds] = referenceTime.split(':').map(Number);
+  //     referenceDate.setHours(hours, minutes, seconds);
+
+  //     // Set the target time by adding 5 minutes to the reference time
+  //     var targetTime = new Date(referenceDate.getTime() + 5 * 60 * 1000);
+
+  //     // Calculate the difference in milliseconds
+  //     var timeDifference = targetTime - new Date();
+
+  //     // Convert the time difference to minutes and seconds
+  //     var remainingMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  //     var remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+  //     // Display the remaining time
+  //     console.log("Remaining time: " + remainingMinutes + " minutes and " + remainingSeconds + " seconds");
+  // }
+
+  // Example usage with the given time "14:19:53"
 
 
 
@@ -434,13 +475,18 @@ function stopTimer() {
 
 
 
-  
+
+
+
+
+
+  // this function will mark attendence of student as from coordinator side.
   let modal_buttons = document.getElementById('modal-buttons');
-  function coordinatorMark(rollno,count,lecture){
+  function coordinatorMark(rollno, count, lecture) {
     var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var dateTime = date+' '+time;
+    var dateTime = date + ' ' + time;
     // console.log(dateTime)
 
     modal_buttons.innerHTML = `<button class="btn btn-primary" type="button" disabled>
@@ -451,17 +497,17 @@ function stopTimer() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ rollno:rollno, count:count, lecture:lecture, time:dateTime }),
+      body: JSON.stringify({ rollno: rollno, count: count, lecture: lecture, time: dateTime }),
     })
       .then(response => response.json())
       .then(resp => {
-        if (resp.data[0]==0){
+        if (resp.data[0] == 0) {
           document.getElementById('modalTime').textContent = '';
-          modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollno},${resp.data[0]},${lecture})">Mark Present</button>`;
+          modal_buttons.innerHTML = `<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollno},${resp.data[0]},${lecture})">Mark Present</button>`;
         }
-        else{
+        else {
           document.getElementById('modalTime').textContent = `Last attendance Marked at : ${resp.data[1]}`;
-          modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollno},${resp.data[0]},${lecture})">Mark Absent</button>`;
+          modal_buttons.innerHTML = `<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollno},${resp.data[0]},${lecture})">Mark Absent</button>`;
         }
         getSelectedStudent();
 
@@ -475,8 +521,8 @@ function stopTimer() {
       });
   }
 
-
-  function openModal(attendanceDetails,count,lecture) {
+  //this is a popup when coordinator will click on "tick" or "cross" image to mark or remove attendence.
+  function openModal(attendanceDetails, count, lecture) {
     document.getElementById('modalName').textContent = '';
     document.getElementById('modalRollNo').textContent = '';
     document.getElementById('modalLecture').textContent = '';
@@ -484,19 +530,19 @@ function stopTimer() {
     // Extract details from the attendanceDetails object
     const name = attendanceDetails.name;
     const rollNo = attendanceDetails.rollno;
-    const time = attendanceDetails.time; 
+    const time = attendanceDetails.time;
 
     // Set modal content
     document.getElementById('modalName').textContent = name;
     document.getElementById('modalRollNo').textContent = rollNo;
     document.getElementById('modalLecture').textContent = lecture;
     //console.log(lecture);
-    if (count==0){
-      modal_buttons.innerHTML=`<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Present</button>`;
+    if (count == 0) {
+      modal_buttons.innerHTML = `<button type="button" class="btn btn-success" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Present</button>`;
     }
-    else{
+    else {
       document.getElementById('modalTime').textContent = `Last attendance Marked at : ${time}`;
-      modal_buttons.innerHTML=`<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Absent</button>`;
+      modal_buttons.innerHTML = `<button type="button" class="btn btn-danger" onclick="coordinatorMark(${rollNo},${count},${lecture})">Mark Absent</button>`;
     }
     // Trigger the Bootstrap modal to open
     $('#attendanceModal').modal('show');
@@ -544,7 +590,7 @@ function stopTimer() {
 
           let textContainer = document.createElement('div');
           textContainer.className = 'image-text';
-          
+
           let attendanceCell = row.insertCell(j);
 
           if (data[i].attendence[count] == 1) {
@@ -552,7 +598,7 @@ function stopTimer() {
             // Attach click event to open the modal
             // textContainer.innerText = data[i].time;
             // textContainer.innerHTML =`<span>${data[i].time}</span><button class="btn btn-secondary bg-red" type="button" onclick="coordinatorMarkAbsent()">Absent</button>`;
-            
+
             // attendanceCell = '<img src="{{ url_for("static", filename="/project_images/present.png") }}">' || "N/A";
             // attendanceCell.textContent = data[i].attendence[count] || "N/A";
           }
@@ -561,12 +607,12 @@ function stopTimer() {
           }
 
           let binary = data[i].attendence[count];
-          let lecture = count+1;
+          let lecture = count + 1;
           imgElement.addEventListener('click', function () {
-                modal_buttons.innerHTML = `<button class="btn btn-primary" type="button" disabled>
+            modal_buttons.innerHTML = `<button class="btn btn-primary" type="button" disabled>
                 <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                 </button>`;
-                openModal(data[i],binary,lecture);
+            openModal(data[i], binary, lecture);
           });
 
           imageContainer.appendChild(imgElement);
@@ -593,6 +639,20 @@ function stopTimer() {
     img.nextElementSibling.style.opacity = 0;
   }
 
+  //below 2 functions will close and open a form which add new coordinates.
+  function openPopup() {
+    document.getElementById("myPopup").style.display = "flex";
+  }
+  function closePopup() {
+    document.getElementById("coordinateForm").reset();
+    // document.querySelectorAll('#coordinateForm input, #coordinateForm button, #formID textarea').forEach(elem => elem.disabled = false);
+    document.getElementById("myPopup").style.display = "none";
+  }
+
+
+  let sectionButtons = document.getElementById('sectionButtons');
+  let ptag = document.createElement('p');
+  ptag.innerText = "Loading...";
   //calling backend for data of students of particular selected section
   function callAjax(url, selectedValue) {
     document.getElementById("attendanceTableBody").innerHTML = "";
@@ -613,8 +673,12 @@ function stopTimer() {
         // console.log(data);
         differentiate(data.users)
         check_on_page_load(selectedValue);
+        setCoordinates(data.coordinates);
         hideLoader();
         populateTable();
+
+        // below line will hide "Loading..." on clicking section.
+        sectionButtons.removeChild(ptag);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -623,6 +687,12 @@ function stopTimer() {
 
   //call this function onchange section / or to get data for another section
   function getSelectedStudent() {
+    // below line will show "Loading..." on clicking section.
+    ptag.style.marginLeft = "10px";
+    sectionButtons.appendChild(ptag);
+
+    document.getElementById('message').innerHTML = '';
+    document.getElementById('form_message').innerHTML = '';
     // Get the selected radio button
     let selectedStudent = document.querySelector('input[name="btnradio"]:checked');
     let selectedValue = selectedStudent.value;
@@ -631,6 +701,72 @@ function stopTimer() {
     document.getElementById('absent_number').innerHTML = 0;
     callAjax("/get_students", selectedValue);
   }
+
+
+  // it insert coordinates options in select tag
+  function setCoordinates(coordinates) {
+    let insertInto = document.getElementById('selectCoordinates');
+    insertInto.innerText = '';
+    if (coordinates.length > 0) {
+      coordinates.forEach((data, index) => {
+        let option = document.createElement('option');
+        option.innerText = data[0];
+        option.setAttribute('value', `['${data[0]}', '${data[1]}', '${data[2]}']`);
+        insertInto.appendChild(option);
+        // console.log(data+1,index);
+        // insertInto.appendChild([])
+      });
+    } else {
+      let option = document.createElement('option');
+      option.innerText = 'No previous coordinates, Add one';
+      insertInto.appendChild(option);
+    }
+  }
+
+  // it change the previous coordinates to new selected coordinates.
+  let changeCoordinates = document.getElementById('changeCoordinates');
+  changeCoordinates.addEventListener("submit", (event) => {
+    event.preventDefault();
+    document.querySelectorAll('#changeCoordinates select, #changeCoordinates button').forEach(elem => elem.disabled = true);
+    let selectedStudent = document.querySelector('input[name="btnradio"]:checked');
+    let selectedValue = selectedStudent.value;
+
+    let select = document.getElementById("selectCoordinates");
+    let selectedOption = select.value;
+
+    let elem = document.createElement('p');
+    let addMessage = document.getElementById('message');
+    addMessage.innerHTML = '';
+    fetch('/changeCoordinate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ section: selectedValue, choosedCoordinates: selectedOption }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success == true) {
+          setCoordinates(data.updatedCoordinates);
+          document.querySelectorAll('#changeCoordinates select, #changeCoordinates button').forEach(elem => elem.disabled = false);
+          elem.innerText = data.msg;
+          elem.style.color = "green";
+          addMessage.appendChild(elem);
+          // console.log(data);
+        }
+        else {
+          // console.log(data);
+          throw `Error : ${data.msg}`;
+        }
+      })
+      .catch(error => {
+        elem.innerText = error;
+        elem.style.color = "red";
+        addMessage.appendChild(elem);
+        document.querySelectorAll('#coordinateForm input, #coordinateForm button, #formID textarea').forEach(elem => elem.disabled = false);
+      });
+    // console.log(selectedOption)
+  });
 
 
   // function to set true/false in Auth table for allowing students to mark attendence or not for particular section.
@@ -643,8 +779,6 @@ function stopTimer() {
       <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
 </button>`;
 
-
-
     fetch('/toggle_true_false', {
       method: 'POST',
       headers: {
@@ -654,7 +788,7 @@ function stopTimer() {
     })
       .then(response => response.json())
       .then(data => {
-        
+
         if (data[0] === true) {
           contain.innerHTML = `<button type="button" id="a1"  class="btn btn-success" onclick="toggle_true_false()">Allowed ${selectedValue}</button>`;
           calculateRemainingTime(data[1]);
@@ -664,27 +798,27 @@ function stopTimer() {
           // calculateRemainingTime(data[1],"not_allowed");
           stopTimer();
           // document.getElementById("remainingTime").textContent = "";
-          
+
         }
       })
       .catch(error => {
         console.log("error : ", error);
       });
-    }
+  }
 
-    
 
-    //this will run on loading page , also when section is changed.
-    function check_on_page_load(section = '2B') {
-      let contain = document.getElementById('allow_button');
-      fetch('/check_true_or_false', {
+  //this will run on loading page , also when section is changed.
+  let addDetails = document.getElementById('allDetails');
+  function check_on_page_load(section = '2B') {
+    let contain = document.getElementById('allow_button');
+    fetch('/check_true_or_false', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ selectedValue: section }),
     })
-    .then(response => response.json())
+      .then(response => response.json())
       .then(data => {
         // let button = document.createElement('button');
         if (data[0] === true) {
@@ -697,6 +831,7 @@ function stopTimer() {
           stopTimer();
           document.getElementById("remainingTime").textContent = "Time over !";
         }
+        addDetails.style.display = "block";
         // contain.appendChild(button);
 
       })
@@ -706,13 +841,96 @@ function stopTimer() {
   }
 
   // check_on_page_load();
-  getSelectedStudent();
+  // getSelectedStudent();
 
 
 
 
-  //add coordinate system
-  //
+  //add new coordinates
+  let coordinates_form = document.getElementById('coordinateForm');
+  coordinates_form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    document.querySelectorAll('#coordinateForm input, #coordinateForm button, #formID textarea').forEach(elem => elem.disabled = true);
+    let selectedStudent = document.querySelector('input[name="btnradio"]:checked');
+    let selectedValue = selectedStudent.value;
+
+    // Get input values
+    let known_as = document.getElementById("known_as").value;
+    let latitude = document.getElementById("latitude").value;
+    let longitude = document.getElementById("longitude").value;
+    // Create a FormData object to send as a POST request
+    let formData = new FormData();
+    formData.append("known_as", known_as);
+    formData.append("latitude", latitude);
+    formData.append("longitude", longitude);
+    formData.append("section", selectedValue);
+
+    let elem = document.createElement('p');
+    let addMessage = document.getElementById('form_message');
+    addMessage.innerHTML = '';
+    // Send the form data to the Flask server using fetch
+    fetch("/addCoordinate", {
+      method: "POST",
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        if (data.success) {
+          setCoordinates(data.coordinates);
+          elem.innerText = data.msg;
+          elem.style.color = "green";
+          addMessage.appendChild(elem);
+          //call a function which will get updated list of coordinates
+          document.getElementById("coordinateForm").reset();
+          document.querySelectorAll('#coordinateForm input, #coordinateForm button, #formID textarea').forEach(elem => elem.disabled = false);
+        } else {
+          throw 'Error : ClassName / LabName must be unique.';
+        }
+        // You can add more logic here based on the server response
+      })
+      .catch(error => {
+        elem.innerText = error;
+        elem.style.color = "red";
+        addMessage.appendChild(elem);
+        document.querySelectorAll('#coordinateForm input, #coordinateForm button, #formID textarea').forEach(elem => elem.disabled = false);
+      });
+  });
+
+
+  function printTable() {
+    var printWindow = window.open('', '_blank');
+    var tableHtml = document.getElementById('attendanceTable').outerHTML;
+    let selectedClass = document.querySelector('input[name="btnradio"]:checked').value;
+
+    printWindow.document.write(`<html><head><title>Class : ${selectedClass}</title>`);
+    printWindow.document.write('<link rel="stylesheet" type="text/css" href="../static/css/printTable.css">');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write(tableHtml);
+    printWindow.document.write('</body></html>');
+
+    // Wait for images to load before triggering the print
+    var images = printWindow.document.querySelectorAll('img');
+    var imagesLoaded = 0;
+
+    function checkAllImagesLoaded() {
+      imagesLoaded++;
+      if (imagesLoaded === images.length) {
+        // All images are loaded, trigger the print operation
+        printWindow.print();
+        printWindow.document.close();
+      }
+    }
+
+    images.forEach(function (img) {
+      if (img.complete) {
+        checkAllImagesLoaded();
+      } else {
+        img.onload = checkAllImagesLoaded;
+      }
+    });
+  }
+
 
 </script>
 {% endblock content %}

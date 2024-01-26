@@ -1,0 +1,59 @@
+/* styles.css */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+/* td{
+    	background-color:orange;
+    } */
+
+img{
+	width:25px;
+	height:25px;
+}
+
+/* Additional styles for print */
+@media print {
+	
+	body {
+	margin: 0;
+	font-size: 8pt; /* Adjust font size for print */
+	}
+	
+	table {
+	border-collapse: collapse;
+	width: 100%;
+	/* max-width: 100%; */
+	page-break-inside: avoid; /* Avoid page breaks inside the table */
+	}
+
+    th, td {
+        border: 1px solid #ddd;       
+        padding: 6px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+    
+    /* td{
+    	background-color:orange;
+    } */
+    
+    /* Force page break before the table on the second page */
+    #data-table {
+    page-break-before: always;
+    }
+}
