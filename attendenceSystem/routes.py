@@ -16,7 +16,9 @@ from sqlalchemy.orm import attributes
 # from sqlalchemy import text ,MetaData, Column, String, Date, DateTime, Integer, Table
 # from sqlalchemy.schema import MetaData
 # from apscheduler.schedulers.background import BackgroundScheduler
-
+import pytz
+IST = pytz.timezone('Asia/Kolkata')
+datetime_ist = datetime.now(IST)
 
 # posts = [
 #     {
@@ -61,16 +63,16 @@ def studentPage():
 
         data = [{'attendence':last_30_pairs,'time':user.date_posted}]
 
-        # today = datetime.now().strftime('%d/%m/%Y')
+        # today = datetime_ist.strftime('%d/%m/%Y')
         # if today<"25/01/2024":
         #     print("small")
         # else:
         #     print("big")
 
         
-        # if i.mark.get(datetime.now().strftime('%d/%m/%Y'))==None:
-        #         i.mark[datetime.now().strftime('%d/%m/%Y')] = "00000000" i.mark[list(i.mark.keys())[-1]]
-        # data = [{'date':list(i.mark.keys())[-1] if i.mark.get(datetime.now().strftime('%d/%m/%Y'))!=None else datetime.now().strftime('%d/%m/%Y'),'attendence': i.mark[list(i.mark.keys())[-1]] if i.mark.get(datetime.now().strftime('%d/%m/%Y'))!=None else "00000000"
+        # if i.mark.get(datetime_ist.strftime('%d/%m/%Y'))==None:
+        #         i.mark[datetime_ist.strftime('%d/%m/%Y')] = "00000000" i.mark[list(i.mark.keys())[-1]]
+        # data = [{'date':list(i.mark.keys())[-1] if i.mark.get(datetime_ist.strftime('%d/%m/%Y'))!=None else datetime_ist.strftime('%d/%m/%Y'),'attendence': i.mark[list(i.mark.keys())[-1]] if i.mark.get(datetime_ist.strftime('%d/%m/%Y'))!=None else "00000000"
         #          ,'time':i.date_posted} for i in user]
 
         check = Auth.query.filter_by(section=current_user.section).first()
@@ -110,7 +112,7 @@ def get_students():
         classes = Auth.query.filter_by(section=data['selectedValue']).first()
         coordinates = classes.coordinates['list']
         # Extract the values and create a list of dictionaries
-        user_data = [{'rollno':i.rollno,'name': i.user.name, 'attendence': i.mark[list(i.mark.keys())[-1]] if i.mark.get(datetime.now().strftime('%d/%m/%Y'))!=None else "00000000",'time':i.date_posted} for i in users]
+        user_data = [{'rollno':i.rollno,'name': i.user.name, 'attendence': i.mark[list(i.mark.keys())[-1]] if i.mark.get(datetime_ist.strftime('%d/%m/%Y'))!=None else "00000000",'time':i.date_posted} for i in users]
         # user_data = [{'rollno':i.rollno,'name': i.user.name, 'attendence': i.mark[enter current date here],'time':i.date_posted} for i in users]
         # Convert the list of dictionaries to JSON
         # print(user_data)
@@ -144,7 +146,7 @@ def toggle_true_false():
             timeris.start()
             # timeris = threading.Timer(10, setToFalse_after_5, args=(data['section'],) )
             # setToFalse_after_5()
-        users.date_posted = datetime.now().strftime("%H:%M:%S")
+        users.date_posted = datetime_ist.strftime("%H:%M:%S")
         timeis = users.date_posted
         db.session.commit()
         # import time
@@ -174,17 +176,17 @@ def coordinatorMark():
         user_data=[]
         # for i in user:
         # print(i)
-        if user.mark.get(datetime.now().strftime('%d/%m/%Y'))==None:
-            user.mark[datetime.now().strftime('%d/%m/%Y')] = "00000000"
+        if user.mark.get(datetime_ist.strftime('%d/%m/%Y'))==None:
+            user.mark[datetime_ist.strftime('%d/%m/%Y')] = "00000000"
         #     db.session.commit()
         #     print("entered into database")
         # print(i.mark)
-        # value = i.mark.setdefault(datetime.now().strftime('%d/%m/%Y'),"00000000")
+        # value = i.mark.setdefault(datetime_ist.strftime('%d/%m/%Y'),"00000000")
         # print(value)
         # print(i.mark)
 
         # currentDate=list(i.mark.keys())[-1]
-        integer_list = [bit for bit in user.mark.get(datetime.now().strftime('%d/%m/%Y'))]
+        integer_list = [bit for bit in user.mark.get(datetime_ist.strftime('%d/%m/%Y'))]
         if data['count'] == 0:
             integer_list[data['lecture']-1] = '1'
             binary = '1'
@@ -194,7 +196,7 @@ def coordinatorMark():
         user.date_posted=data['time']
 
         a = ''.join(integer_list)
-        user.mark[datetime.now().strftime('%d/%m/%Y')] = a
+        user.mark[datetime_ist.strftime('%d/%m/%Y')] = a
         attributes.flag_modified(user, "mark")
         print(user.mark)
         user_data = [binary,user.date_posted]
@@ -333,7 +335,7 @@ def register():
 
 # def add_column_daily():
 #     # Generate a unique column name based on the current date
-#     # column_name = f'{datetime.now().strftime("%Y%m%d")}'
+#     # column_name = f'{datetime_ist.strftime("%Y%m%d")}'
 #     # print(column_name)
 
 #     # Check if the column already exists
@@ -345,7 +347,7 @@ def register():
 #     # metadata.reflect(bind=engine)
 #     # table = metadata.tables.get(table_name)
 
-#     new_column_name = f'{datetime.now().strftime("%d-%m-%Y")}'
+#     new_column_name = f'{datetime_ist.strftime("%d-%m-%Y")}'
 
     
 #     MarkAttendence.__table__.reflect()
@@ -496,7 +498,7 @@ def current_lecture():
     }
 
     # Get the current time
-    current_time = datetime.now().strftime("%H:%M")
+    current_time = datetime_ist.strftime("%H:%M")
     # current_time = "09:15"
     
     # Determining the current lecture based on the schedule
@@ -612,22 +614,22 @@ def process_frame():
         # for i in user:
             # print(i.mark)
             # currentDate = list(i.mark.keys())[-1] #last key in {} in marks column.
-        if user.mark.get(datetime.now().strftime('%d/%m/%Y'))==None: #if not in database then make one.
-            user.mark[datetime.now().strftime('%d/%m/%Y')] = "00000000"
+        if user.mark.get(datetime_ist.strftime('%d/%m/%Y'))==None: #if not in database then make one.
+            user.mark[datetime_ist.strftime('%d/%m/%Y')] = "00000000"
 
 
 
-        # integer_list = [bit for bit in i.mark[datetime.now().strftime('%d/%m/%Y')]]
+        # integer_list = [bit for bit in i.mark[datetime_ist.strftime('%d/%m/%Y')]]
         # # list(i.mark.keys()[-1]) is fetching the key i.e. 25/12/2023 from  dict {}
         # integer_list[current_lecture-1] = '1'
         # a = ''.join(integer_list)
 
-        attendance_string = user.mark[datetime.now().strftime('%d/%m/%Y')]
+        attendance_string = user.mark[datetime_ist.strftime('%d/%m/%Y')]
         a = attendance_string[: current_lecture() - 1] + "1" + attendance_string[current_lecture() : ]
 
 
 
-        user.mark[datetime.now().strftime('%d/%m/%Y')] = a
+        user.mark[datetime_ist.strftime('%d/%m/%Y')] = a
         attributes.flag_modified(user, "mark") #most important line related (to make changes in json field in sqlalchemy.)
         # print(i)
         db.session.commit()
