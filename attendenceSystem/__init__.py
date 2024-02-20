@@ -3,29 +3,44 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 # from flask_apscheduler import APScheduler
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf import CSRFProtect
+import os
+# import attendenceSystem.config
+# from flask_wtf.csrf import CSRFProtect
 
 
 app = Flask(__name__)
-# app.secret_key = '57678y98696ce0c676dfd655860ba245'
-app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
+# app.secret_key = os.urandom(24)
+# app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sites.db'
-# app.config["WTF_CSRF_CHECK_DEFAULT"] = True
+# app.config['SESSION_TYPE'] = 'memcached'
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['WTF_CSRF_SECRET_KEY'] = os.urandom(24)
 app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 app.config["IMAGE_UPLOADS"] = 'static/img/'
-db = SQLAlchemy(app)
-app.app_context().push()
-bcrypt = Bcrypt(app)
+app.config['SECRET_KEY'] = os.urandom(24)
 
-csrf = CSRFProtect(app)
-# csrf.init_app(app)
 
-login_manager = LoginManager()
-login_manager.login_view = 'login'
-login_manager.init_app(app)
+with app.app_context():
+    db = SQLAlchemy(app)
+    bcrypt = Bcrypt(app)
+    csrf = CSRFProtect(app)
+    login_manager = LoginManager()
+    login_manager.login_view = 'login'
+    login_manager.init_app(app)
+
+# db = SQLAlchemy(app)
+# app.app_context().push()
+# bcrypt = Bcrypt(app)
+# login_manager = LoginManager()
+# login_manager.login_view = 'login'
+# login_manager.init_app(app)
+# csrf = CSRFProtect(app)
+
+# login_manager.login_message_category = 'info'
 # scheduler = APScheduler(app)
 # scheduler.start()
-# csrf = CSRFProtect(app)
 
 
 from attendenceSystem import routes          #this line should be present here
